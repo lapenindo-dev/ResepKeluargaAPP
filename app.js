@@ -1,5 +1,5 @@
 /* =====================================================
-   Resep Keluarga v2.7.0
+   Resep Keluarga v2.7.1
    Foto Masakan Hero Image + Login Email/Password + Share Aplikasi + AI Menu Generator + Koleksi + Print/PDF + Admin Backup Hidden
    AI Extract (Qwen): Foto dan Teks/Caption Manual
    DATABASE SYNC: Meal Plans + Collections + History (localStorage → Supabase)
@@ -33,12 +33,39 @@ async function saveMealPlanToDB(date, slot, recipeId, recipeName) {
       recipe_id: recipeId || null,
       recipe_name: recipeName || ''
     }, { onConflict: 'user_id,plan_date,slot' });
-    if (error) {
-      console.error('Error saving meal plan:', error);
-      try { localStorage.setItem('mealPlanV210', JSON.stringify(mealPlan)); } catch(e){}
-    }
+    if (error) throw error;
   } catch (err) {
     console.error('Meal plan sync failed:', err);
+    try { localStorage.setItem('mealPlanV210', JSON.stringify(mealPlan)); } catch(e){}
+  }
+}
+
+async function syncMealPlanToDB() {
+  if (!currentUser || !db) return;
+  try {
+    await db.from('meal_plans').delete().eq('user_id', currentUser.id);
+    const rows = [];
+    (mealPlan || []).forEach(day => {
+      const dateKey = day.dateKey || (day.date ? new Date(day.date).toISOString().slice(0,10) : null);
+      if (!dateKey) return;
+      (day.meals || []).forEach((meal, index) => {
+        if (!meal?.recipeId) return;
+        const recipe = recipes.find(r => String(r.id) === String(meal.recipeId));
+        rows.push({
+          user_id: currentUser.id,
+          plan_date: dateKey,
+          slot: MEAL_LABELS[index] || `Menu ${index + 1}`,
+          recipe_id: meal.recipeId,
+          recipe_name: recipe?.nama_resep || meal.recipeName || ''
+        });
+      });
+    });
+    if (rows.length) {
+      const { error } = await db.from('meal_plans').insert(rows);
+      if (error) throw error;
+    }
+  } catch (err) {
+    console.error('Failed to sync meal plan:', err);
   }
 }
 
@@ -50,7 +77,18 @@ async function loadMealPlansFromDB() {
   try {
     const { data, error } = await db.from('meal_plans').select('*').eq('user_id', currentUser.id).order('plan_date', { ascending: true });
     if (error) throw error;
-    mealPlan = data.map(row => ({ date: row.plan_date, slot: row.slot, recipeId: row.recipe_id, recipeName: row.recipe_name }));
+    const grouped = new Map();
+    (data || []).forEach(row => {
+      const dateKey = row.plan_date;
+      if (!grouped.has(dateKey)) grouped.set(dateKey, { dateKey, mealsBySlot: {} });
+      grouped.get(dateKey).mealsBySlot[row.slot] = { recipeId: row.recipe_id, recipeName: row.recipe_name || '', locked: false, source: 'db' };
+    });
+    mealPlan = Array.from(grouped.values()).map((day, index) => ({
+      day: index + 1,
+      date: new Date(day.dateKey),
+      dateKey: day.dateKey,
+      meals: MEAL_LABELS.map(label => day.mealsBySlot[label]).filter(Boolean)
+    })).filter(day => day.meals.length);
     try { localStorage.setItem('mealPlanV210', JSON.stringify(mealPlan)); } catch(e){}
   } catch (err) {
     console.error('Failed to load meal plans:', err);
@@ -81,13 +119,15 @@ async function saveRecipeCollectionsToDB() {
   }
   try {
     await db.from('recipe_collections').delete().eq('user_id', currentUser.id);
-    const collectionsToInsert = Object.entries(recipeCollections).map(([name, data]) => ({
-      user_id: currentUser.id,
-      collection_name: name,
-      collection_description: data.description || '',
-      icon_emoji: data.icon || '📁',
-      recipe_ids: data.recipeIds || []
-    }));
+    const collectionsToInsert = Object.entries(recipeCollections)
+      .filter(([_, ids]) => Array.isArray(ids))
+      .map(([name, ids]) => ({
+        user_id: currentUser.id,
+        collection_name: name,
+        collection_description: '',
+        icon_emoji: '📁',
+        recipe_ids: ids || []
+      }));
     if (collectionsToInsert.length > 0) {
       const { error } = await db.from('recipe_collections').insert(collectionsToInsert);
       if (error) throw error;
@@ -107,12 +147,8 @@ async function loadRecipeCollectionsFromDB() {
     const { data, error } = await db.from('recipe_collections').select('*').eq('user_id', currentUser.id);
     if (error) throw error;
     recipeCollections = {};
-    data.forEach(row => {
-      recipeCollections[row.collection_name] = {
-        description: row.collection_description,
-        icon: row.icon_emoji,
-        recipeIds: row.recipe_ids || []
-      };
+    (data || []).forEach(row => {
+      recipeCollections[row.collection_name] = Array.isArray(row.recipe_ids) ? row.recipe_ids : [];
     });
     try { localStorage.setItem('recipeCollectionsV210', JSON.stringify(recipeCollections)); } catch(e){}
   } catch (err) {
@@ -386,6 +422,7 @@ async function initAuth(){
       }
     });
     if(currentUser){
+      await syncDataAfterLogin();
       await loadAll();
     } else {
       setAuthStatus('Silakan login dulu untuk membuka resep keluarga.', 'loading');
@@ -1258,13 +1295,8 @@ function formatPlanDate(dateObj){
 
 async function saveMealPlan(){
   try { localStorage.setItem('mealPlanV210', JSON.stringify(mealPlan)); } catch(e){}
-  // Sync to DB jika user login
-  if (currentUser && mealPlan.length > 0) {
-    mealPlan.forEach(m => {
-      if (m.date && m.slot) {
-        saveMealPlanToDB(m.date, m.slot, m.recipeId, m.recipeName).catch(e => console.error('Meal plan sync error:', e));
-      }
-    });
+  if (currentUser) {
+    await syncMealPlanToDB().catch(e => console.error('Meal plan sync error:', e));
   }
 }
 
@@ -2141,7 +2173,7 @@ window.exportDataBackup = () => {
   if(!requireLogin()) return;
   const payload = {
     app: 'Resep Keluarga',
-    version: '2.6.0',
+    version: '2.7.1',
     user_email: currentUser?.email || '',
     exported_at: new Date().toISOString(),
     recipes,
