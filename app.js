@@ -3,7 +3,7 @@
    Foto Masakan Hero Image + Login Email/Password + Share Aplikasi + AI Menu Generator + Koleksi + Print/PDF + Admin Backup Hidden
    AI Extract (Qwen): Foto dan Teks/Caption Manual
    ===================================================== */
-const SUPABASE_URL = 'https://tqexfiohtirjngcuxjkx.supabase.co';
+const SUPABASE_URL = 'https://tqexfiohtirjcnguxjkx.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_DGbM2P7HfKFXQxUwf1zpxQ_FydGbvWe';
 let db;
 try { db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY); }
