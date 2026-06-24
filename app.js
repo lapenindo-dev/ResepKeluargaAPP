@@ -1,221 +1,15 @@
 /* =====================================================
-   Resep Keluarga v2.7.1
+   Resep Keluarga VR1.0.0 (v2.6.1 core + v2.7.0 UI)
    Foto Masakan Hero Image + Login Email/Password + Share Aplikasi + AI Menu Generator + Koleksi + Print/PDF + Admin Backup Hidden
    AI Extract (Qwen): Foto dan Teks/Caption Manual
-   DATABASE SYNC: Meal Plans + Collections + History (localStorage → Supabase)
    ===================================================== */
-const SUPABASE_URL = 'https://tqexfiohtirjncguxjkx.supabase.co';
+const SUPABASE_URL = 'https://tqexfiohtirjngcuxjkx.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_DGbM2P7HfKFXQxUwf1zpxQ_FydGbvWe';
 let db;
 try { db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY); }
 catch(e){ console.error('Supabase init gagal:', e); }
 const PHOTO_BUCKET = 'recipe-photos';
 const SIGNED_PHOTO_TTL = 60 * 60 * 24 * 7; // 7 hari
-
-// ============================================
-// v2.7.0 DATABASE SYNC FUNCTIONS
-// ============================================
-
-// ─────────────────────────────────────────────────────────────────
-// 1. MEAL PLANS - Sync Jadwal Menu ke Supabase
-// ─────────────────────────────────────────────────────────────────
-
-async function saveMealPlanToDB(date, slot, recipeId, recipeName) {
-  if (!currentUser) {
-    try { localStorage.setItem('mealPlanV210', JSON.stringify(mealPlan)); } catch(e){}
-    return;
-  }
-  try {
-    const { error } = await db.from('meal_plans').upsert({
-      user_id: currentUser.id,
-      plan_date: date,
-      slot: slot,
-      recipe_id: recipeId || null,
-      recipe_name: recipeName || ''
-    }, { onConflict: 'user_id,plan_date,slot' });
-    if (error) throw error;
-  } catch (err) {
-    console.error('Meal plan sync failed:', err);
-    try { localStorage.setItem('mealPlanV210', JSON.stringify(mealPlan)); } catch(e){}
-  }
-}
-
-async function syncMealPlanToDB() {
-  if (!currentUser || !db) return;
-  try {
-    await db.from('meal_plans').delete().eq('user_id', currentUser.id);
-    const rows = [];
-    (mealPlan || []).forEach(day => {
-      const dateKey = day.dateKey || (day.date ? new Date(day.date).toISOString().slice(0,10) : null);
-      if (!dateKey) return;
-      (day.meals || []).forEach((meal, index) => {
-        if (!meal?.recipeId) return;
-        const recipe = recipes.find(r => String(r.id) === String(meal.recipeId));
-        rows.push({
-          user_id: currentUser.id,
-          plan_date: dateKey,
-          slot: MEAL_LABELS[index] || `Menu ${index + 1}`,
-          recipe_id: meal.recipeId,
-          recipe_name: recipe?.nama_resep || meal.recipeName || ''
-        });
-      });
-    });
-    if (rows.length) {
-      const { error } = await db.from('meal_plans').insert(rows);
-      if (error) throw error;
-    }
-  } catch (err) {
-    console.error('Failed to sync meal plan:', err);
-  }
-}
-
-async function loadMealPlansFromDB() {
-  if (!currentUser) {
-    try { mealPlan = JSON.parse(localStorage.getItem('mealPlanV210') || '[]'); } catch(e) { mealPlan = []; }
-    return;
-  }
-  try {
-    const { data, error } = await db.from('meal_plans').select('*').eq('user_id', currentUser.id).order('plan_date', { ascending: true });
-    if (error) throw error;
-    const grouped = new Map();
-    (data || []).forEach(row => {
-      const dateKey = row.plan_date;
-      if (!grouped.has(dateKey)) grouped.set(dateKey, { dateKey, mealsBySlot: {} });
-      grouped.get(dateKey).mealsBySlot[row.slot] = { recipeId: row.recipe_id, recipeName: row.recipe_name || '', locked: false, source: 'db' };
-    });
-    mealPlan = Array.from(grouped.values()).map((day, index) => ({
-      day: index + 1,
-      date: new Date(day.dateKey),
-      dateKey: day.dateKey,
-      meals: MEAL_LABELS.map(label => day.mealsBySlot[label]).filter(Boolean)
-    })).filter(day => day.meals.length);
-    try { localStorage.setItem('mealPlanV210', JSON.stringify(mealPlan)); } catch(e){}
-  } catch (err) {
-    console.error('Failed to load meal plans:', err);
-    try { mealPlan = JSON.parse(localStorage.getItem('mealPlanV210') || '[]'); } catch(e) { mealPlan = []; }
-  }
-}
-
-async function deleteMealPlanFromDB(date, slot) {
-  if (!currentUser) {
-    try { localStorage.setItem('mealPlanV210', JSON.stringify(mealPlan)); } catch(e){}
-    return;
-  }
-  try {
-    await db.from('meal_plans').delete().eq('user_id', currentUser.id).eq('plan_date', date).eq('slot', slot);
-  } catch (err) {
-    console.error('Error deleting meal plan:', err);
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────
-// 2. RECIPE COLLECTIONS - Sync Folder Warisan ke Supabase
-// ─────────────────────────────────────────────────────────────────
-
-async function saveRecipeCollectionsToDB() {
-  if (!currentUser) {
-    try { localStorage.setItem('recipeCollectionsV210', JSON.stringify(recipeCollections)); } catch(e){}
-    return;
-  }
-  try {
-    await db.from('recipe_collections').delete().eq('user_id', currentUser.id);
-    const collectionsToInsert = Object.entries(recipeCollections)
-      .filter(([_, ids]) => Array.isArray(ids))
-      .map(([name, ids]) => ({
-        user_id: currentUser.id,
-        collection_name: name,
-        collection_description: '',
-        icon_emoji: '📁',
-        recipe_ids: ids || []
-      }));
-    if (collectionsToInsert.length > 0) {
-      const { error } = await db.from('recipe_collections').insert(collectionsToInsert);
-      if (error) throw error;
-    }
-  } catch (err) {
-    console.error('Error saving collections:', err);
-    try { localStorage.setItem('recipeCollectionsV210', JSON.stringify(recipeCollections)); } catch(e){}
-  }
-}
-
-async function loadRecipeCollectionsFromDB() {
-  if (!currentUser) {
-    try { recipeCollections = JSON.parse(localStorage.getItem('recipeCollectionsV210') || '{}'); } catch(e) { recipeCollections = {}; }
-    return;
-  }
-  try {
-    const { data, error } = await db.from('recipe_collections').select('*').eq('user_id', currentUser.id);
-    if (error) throw error;
-    recipeCollections = {};
-    (data || []).forEach(row => {
-      recipeCollections[row.collection_name] = Array.isArray(row.recipe_ids) ? row.recipe_ids : [];
-    });
-    try { localStorage.setItem('recipeCollectionsV210', JSON.stringify(recipeCollections)); } catch(e){}
-  } catch (err) {
-    console.error('Failed to load collections:', err);
-    try { recipeCollections = JSON.parse(localStorage.getItem('recipeCollectionsV210') || '{}'); } catch(e) { recipeCollections = {}; }
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────
-// 3. RECIPE HISTORY - Sync Riwayat ke Supabase
-// ─────────────────────────────────────────────────────────────────
-
-async function addToRecipeHistoryDB(recipeId) {
-  if (!currentUser) {
-    recipeHistory = recipeHistory.filter(r => r !== recipeId);
-    recipeHistory.unshift(recipeId);
-    if (recipeHistory.length > 50) recipeHistory.pop();
-    try { localStorage.setItem('recipeHistory', JSON.stringify(recipeHistory)); } catch(e){}
-    return;
-  }
-  try {
-    const { error } = await db.from('recipe_history').insert({ user_id: currentUser.id, recipe_id: recipeId });
-    if (error) {
-      console.error('Error adding to history:', error);
-      recipeHistory = recipeHistory.filter(r => r !== recipeId);
-      recipeHistory.unshift(recipeId);
-      if (recipeHistory.length > 50) recipeHistory.pop();
-      try { localStorage.setItem('recipeHistory', JSON.stringify(recipeHistory)); } catch(e){}
-    }
-  } catch (err) {
-    console.error('History sync failed:', err);
-  }
-}
-
-async function loadRecipeHistoryFromDB() {
-  if (!currentUser) {
-    try { recipeHistory = JSON.parse(localStorage.getItem('recipeHistory') || '[]'); } catch(e) { recipeHistory = []; }
-    return;
-  }
-  try {
-    const { data, error } = await db.from('recipe_history').select('recipe_id').eq('user_id', currentUser.id).order('viewed_at', { ascending: false }).limit(50);
-    if (error) throw error;
-    recipeHistory = data.map(row => row.recipe_id);
-    try { localStorage.setItem('recipeHistory', JSON.stringify(recipeHistory)); } catch(e){}
-  } catch (err) {
-    console.error('Failed to load history:', err);
-    try { recipeHistory = JSON.parse(localStorage.getItem('recipeHistory') || '[]'); } catch(e) { recipeHistory = []; }
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────
-// 4. SYNC ON LOGIN/LOGOUT
-// ─────────────────────────────────────────────────────────────────
-
-async function syncDataAfterLogin() {
-  console.log('🔄 Syncing data after login...');
-  await loadRecipeHistoryFromDB();
-  await loadMealPlansFromDB();
-  await loadRecipeCollectionsFromDB();
-  console.log('✅ Data synced from database');
-}
-
-async function syncDataBeforeLogout() {
-  console.log('💾 Syncing data before logout...');
-  console.log('✅ Data saved to database');
-}
-
 const signedPhotoCache = new Map();
 let extraPhotosDisplayState = [];
 
@@ -417,12 +211,10 @@ async function initAuth(){
       renderAuthState();
       if(currentUser){
         setAuthStatus(null);
-        await syncDataAfterLogin(); // Sync meal plans, collections, history from DB
         await loadAll();
       }
     });
     if(currentUser){
-      await syncDataAfterLogin();
       await loadAll();
     } else {
       setAuthStatus('Silakan login dulu untuk membuka resep keluarga.', 'loading');
@@ -525,7 +317,6 @@ async function sendLoginEmail(){
 
 async function logout(){
   if(!db) return;
-  await syncDataBeforeLogout(); // Save any pending changes
   await db.auth.signOut();
   currentUser = null;
   recipes = []; masterIngredients = []; masterUnits = []; cookLog = [];
@@ -989,8 +780,6 @@ window.viewRecipe = (id) => {
   if(!r) return alert('Resep tidak ditemukan.');
   recipeHistory = [id, ...recipeHistory.filter(x=>x!==id)].slice(0,10);
   try { localStorage.setItem('recipeHistory', JSON.stringify(recipeHistory)); } catch(e){}
-  // Sync history to DB
-  addToRecipeHistoryDB(id).catch(e => console.error('History sync error:', e));
 
   const allPhotos = [r._foto_url_display || photoDisplayUrl(r.foto_url), ...((Array.isArray(r._foto_urls_display) ? r._foto_urls_display : []) || [])].filter(Boolean);
   detailPhotoUrls = allPhotos;
@@ -1293,11 +1082,8 @@ function formatPlanDate(dateObj){
   return dateObj.toLocaleDateString('id-ID', { weekday:'short', day:'numeric', month:'short' });
 }
 
-async function saveMealPlan(){
+function saveMealPlan(){
   try { localStorage.setItem('mealPlanV210', JSON.stringify(mealPlan)); } catch(e){}
-  if (currentUser) {
-    await syncMealPlanToDB().catch(e => console.error('Meal plan sync error:', e));
-  }
 }
 
 function buildPlanText(){
@@ -2065,19 +1851,15 @@ function renderHistory(){
 
 /* ========== BACKUP / COLLECTIONS / PRINT ========== */
 
-async function saveCollections(){
+function saveCollections(){
   try { localStorage.setItem('recipeCollectionsV210', JSON.stringify(recipeCollections)); } catch(e){}
-  // Sync to DB jika user login
-  if (currentUser) {
-    await saveRecipeCollectionsToDB().catch(e => console.error('Collections sync error:', e));
-  }
 }
 
-async function ensureDefaultCollections(){
+function ensureDefaultCollections(){
   DEFAULT_COLLECTIONS.forEach(name => {
     if(!Array.isArray(recipeCollections[name])) recipeCollections[name] = [];
   });
-  await saveCollections();
+  saveCollections();
 }
 
 function collectionNamesForRecipe(recipeId){
@@ -2173,7 +1955,7 @@ window.exportDataBackup = () => {
   if(!requireLogin()) return;
   const payload = {
     app: 'Resep Keluarga',
-    version: '2.7.1',
+    version: '2.6.0',
     user_email: currentUser?.email || '',
     exported_at: new Date().toISOString(),
     recipes,
@@ -2271,7 +2053,7 @@ function buildPrintableRecipeHtml(r){
   <h2>Bahan</h2>${bahan}
   <h2>Cara Memasak</h2>${steps}
   <h2>Catatan</h2><div class="note">${escapeHtml(r.catatan_keluarga||'-')}</div>
-  <div class="footer">Tag: ${escapeHtml(tags || '-')}<br>Dibuat dari Resep Keluarga v2.6.0</div>
+  <div class="footer">Tag: ${escapeHtml(tags || '-')}<br>Dibuat dari Resep Keluarga VR1.0.0 (v2.6.1 core + v2.7.0 UI)</div>
   <script>setTimeout(()=>window.print(),400)<\/script></body></html>`;
 }
 
@@ -2297,6 +2079,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if($('loginEmail')) $('loginEmail').addEventListener('keydown', (e)=>{ if(e.key==='Enter') loginWithPassword(); });
   if($('loginPassword')) $('loginPassword').addEventListener('keydown', (e)=>{ if(e.key==='Enter') authMode === 'signup' ? signupWithPassword() : loginWithPassword(); });
   if($('logoutBtn')) $('logoutBtn').addEventListener('click', logout);
+  if($('logoutBtnMore')) $('logoutBtnMore').addEventListener('click', logout);
   if($('shareAppBtn')) $('shareAppBtn').addEventListener('click', shareApp);
   if($('shareAppHomeBtn')) $('shareAppHomeBtn').addEventListener('click', shareApp);
   if($('onboardingStartBtn')) $('onboardingStartBtn').addEventListener('click', () => { markOnboardingSeen(); resetForm(); go('add'); });
@@ -2467,5 +2250,5 @@ document.addEventListener('DOMContentLoaded', () => {
   renderAuthState();
   initAuth();
 
-  console.log('✅ Resep Keluarga v2.6.0 loaded');
+  console.log('✅ Resep Keluarga VR1.0.0 (v2.6.1 core + v2.7.0 UI) loaded');
 });

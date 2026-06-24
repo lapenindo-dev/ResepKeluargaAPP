@@ -1,3 +1,6 @@
+-- JANGAN DIJALANKAN: gunakan supabase-migration-v2.6.1-private-photos-polish-safe.sql
+-- File v2.6.0 lama disimpan hanya sebagai arsip.
+
 -- =====================================================
 -- Resep Keluarga v2.6.0
 -- Private photo storage + per-account backup readiness + note column rename
