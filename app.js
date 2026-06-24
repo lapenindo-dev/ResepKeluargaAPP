@@ -1,15 +1,211 @@
 /* =====================================================
-   Resep Keluarga VR1.0.0 (v2.6.1 core + v2.7.0 UI)
+   Resep Keluarga VR1.0.1 (v2.6.1 core + v2.7.0 UI + DB sync fix)
    Foto Masakan Hero Image + Login Email/Password + Share Aplikasi + AI Menu Generator + Koleksi + Print/PDF + Admin Backup Hidden
    AI Extract (Qwen): Foto dan Teks/Caption Manual
+   SUPABASE FIX: URL dikembalikan ke project aktif + sync functions v2.7.0
    ===================================================== */
-const SUPABASE_URL = 'https://tqexfiohtirjngcuxjkx.supabase.co';
+const SUPABASE_URL = 'https://tqexfiohtirjncguxjkx.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_DGbM2P7HfKFXQxUwf1zpxQ_FydGbvWe';
 let db;
 try { db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY); }
 catch(e){ console.error('Supabase init gagal:', e); }
 const PHOTO_BUCKET = 'recipe-photos';
 const SIGNED_PHOTO_TTL = 60 * 60 * 24 * 7; // 7 hari
+
+
+// ============================================
+// v2.7.0 DATABASE SYNC FUNCTIONS (patched for current UI data shape)
+// ============================================
+
+function getPlanDateKey(dayPlan){
+  if(dayPlan?.dateKey) return String(dayPlan.dateKey);
+  if(dayPlan?.date){
+    const d = new Date(dayPlan.date);
+    if(!Number.isNaN(d.getTime())) return d.toISOString().slice(0,10);
+  }
+  return '';
+}
+
+function mealSlotOrder(slot){
+  const idx = MEAL_LABELS.indexOf(slot);
+  return idx >= 0 ? idx : 99;
+}
+
+async function syncMealPlanToDB(){
+  try { localStorage.setItem('mealPlanV210', JSON.stringify(mealPlan)); } catch(e){}
+  if(!currentUser || !db) return;
+  try {
+    await db.from('meal_plans').delete().eq('user_id', currentUser.id);
+    const rows = [];
+    (mealPlan || []).forEach(dayPlan => {
+      const planDate = getPlanDateKey(dayPlan);
+      if(!planDate) return;
+      (dayPlan.meals || []).forEach((meal, idx) => {
+        const recipeId = meal.recipeId || meal.recipe_id || null;
+        const recipe = recipes.find(r => String(r.id) === String(recipeId));
+        rows.push({
+          user_id: currentUser.id,
+          plan_date: planDate,
+          slot: MEAL_LABELS[idx] || String(idx + 1),
+          recipe_id: recipeId,
+          recipe_name: recipe?.nama_resep || meal.recipeName || meal.recipe_name || '',
+          locked: !!meal.locked
+        });
+      });
+    });
+    if(rows.length){
+      const { error } = await db.from('meal_plans').insert(rows);
+      if(error) throw error;
+    }
+  } catch(err){
+    console.warn('Meal plan DB sync skipped/fallback localStorage:', err?.message || err);
+  }
+}
+
+async function saveMealPlanToDB(date, slot, recipeId, recipeName){
+  if(!currentUser || !db){
+    try { localStorage.setItem('mealPlanV210', JSON.stringify(mealPlan)); } catch(e){}
+    return;
+  }
+  try {
+    const { error } = await db.from('meal_plans').upsert({
+      user_id: currentUser.id,
+      plan_date: date,
+      slot,
+      recipe_id: recipeId || null,
+      recipe_name: recipeName || ''
+    }, { onConflict: 'user_id,plan_date,slot' });
+    if(error) throw error;
+  } catch(err){
+    console.warn('Meal plan row sync skipped/fallback localStorage:', err?.message || err);
+    try { localStorage.setItem('mealPlanV210', JSON.stringify(mealPlan)); } catch(e){}
+  }
+}
+
+async function loadMealPlansFromDB(){
+  if(!currentUser || !db){
+    try { mealPlan = JSON.parse(localStorage.getItem('mealPlanV210') || '[]'); } catch(e){ mealPlan = []; }
+    return;
+  }
+  try {
+    const { data, error } = await db.from('meal_plans').select('*').eq('user_id', currentUser.id).order('plan_date', { ascending: true });
+    if(error) throw error;
+    if(!data || !data.length) return;
+    const grouped = new Map();
+    data.forEach(row => {
+      const dateKey = row.plan_date;
+      if(!grouped.has(dateKey)) grouped.set(dateKey, []);
+      grouped.get(dateKey).push(row);
+    });
+    mealPlan = Array.from(grouped.entries()).map(([dateKey, rows], i) => ({
+      day: i + 1,
+      date: new Date(dateKey + 'T00:00:00'),
+      dateKey,
+      meals: rows.sort((a,b) => mealSlotOrder(a.slot) - mealSlotOrder(b.slot)).map(row => ({
+        recipeId: row.recipe_id,
+        recipeName: row.recipe_name || '',
+        locked: !!row.locked,
+        source: 'db'
+      }))
+    }));
+    try { localStorage.setItem('mealPlanV210', JSON.stringify(mealPlan)); } catch(e){}
+  } catch(err){
+    console.warn('Meal plan DB load skipped/fallback localStorage:', err?.message || err);
+    try { mealPlan = JSON.parse(localStorage.getItem('mealPlanV210') || '[]'); } catch(e){ mealPlan = []; }
+  }
+}
+
+async function deleteMealPlanFromDB(date, slot){
+  if(!currentUser || !db){
+    try { localStorage.setItem('mealPlanV210', JSON.stringify(mealPlan)); } catch(e){}
+    return;
+  }
+  try {
+    await db.from('meal_plans').delete().eq('user_id', currentUser.id).eq('plan_date', date).eq('slot', slot);
+  } catch(err){
+    console.warn('Meal plan delete skipped:', err?.message || err);
+  }
+}
+
+async function saveRecipeCollectionsToDB(){
+  try { localStorage.setItem('recipeCollectionsV210', JSON.stringify(recipeCollections)); } catch(e){}
+  if(!currentUser || !db) return;
+  try {
+    await db.from('recipe_collections').delete().eq('user_id', currentUser.id);
+    const rows = Object.entries(recipeCollections || {}).map(([name, value]) => ({
+      user_id: currentUser.id,
+      collection_name: name,
+      collection_description: (value && !Array.isArray(value) ? value.description : '') || '',
+      icon_emoji: (value && !Array.isArray(value) ? value.icon : '') || '📁',
+      recipe_ids: Array.isArray(value) ? value : (value?.recipeIds || [])
+    }));
+    if(rows.length){
+      const { error } = await db.from('recipe_collections').insert(rows);
+      if(error) throw error;
+    }
+  } catch(err){
+    console.warn('Collections DB sync skipped/fallback localStorage:', err?.message || err);
+  }
+}
+
+async function loadRecipeCollectionsFromDB(){
+  if(!currentUser || !db){
+    try { recipeCollections = JSON.parse(localStorage.getItem('recipeCollectionsV210') || '{}'); } catch(e){ recipeCollections = {}; }
+    return;
+  }
+  try {
+    const { data, error } = await db.from('recipe_collections').select('*').eq('user_id', currentUser.id);
+    if(error) throw error;
+    if(!data || !data.length) return;
+    recipeCollections = {};
+    data.forEach(row => { recipeCollections[row.collection_name] = row.recipe_ids || []; });
+    try { localStorage.setItem('recipeCollectionsV210', JSON.stringify(recipeCollections)); } catch(e){}
+  } catch(err){
+    console.warn('Collections DB load skipped/fallback localStorage:', err?.message || err);
+    try { recipeCollections = JSON.parse(localStorage.getItem('recipeCollectionsV210') || '{}'); } catch(e){ recipeCollections = {}; }
+  }
+}
+
+async function addToRecipeHistoryDB(recipeId){
+  recipeHistory = [recipeId, ...recipeHistory.filter(x => x !== recipeId)].slice(0,50);
+  try { localStorage.setItem('recipeHistory', JSON.stringify(recipeHistory)); } catch(e){}
+  if(!currentUser || !db) return;
+  try {
+    const { error } = await db.from('recipe_history').insert({ user_id: currentUser.id, recipe_id: recipeId });
+    if(error) throw error;
+  } catch(err){
+    console.warn('History DB sync skipped/fallback localStorage:', err?.message || err);
+  }
+}
+
+async function loadRecipeHistoryFromDB(){
+  if(!currentUser || !db){
+    try { recipeHistory = JSON.parse(localStorage.getItem('recipeHistory') || '[]'); } catch(e){ recipeHistory = []; }
+    return;
+  }
+  try {
+    const { data, error } = await db.from('recipe_history').select('recipe_id').eq('user_id', currentUser.id).order('viewed_at', { ascending: false }).limit(50);
+    if(error) throw error;
+    if(data && data.length){
+      recipeHistory = [...new Set(data.map(row => row.recipe_id))].slice(0,50);
+      try { localStorage.setItem('recipeHistory', JSON.stringify(recipeHistory)); } catch(e){}
+    }
+  } catch(err){
+    console.warn('History DB load skipped/fallback localStorage:', err?.message || err);
+    try { recipeHistory = JSON.parse(localStorage.getItem('recipeHistory') || '[]'); } catch(e){ recipeHistory = []; }
+  }
+}
+
+async function syncDataAfterLogin(){
+  await loadRecipeHistoryFromDB();
+  await loadMealPlansFromDB();
+  await loadRecipeCollectionsFromDB();
+}
+
+async function syncDataBeforeLogout(){
+  await syncMealPlanToDB();
+  await saveRecipeCollectionsToDB();
+}
 const signedPhotoCache = new Map();
 let extraPhotosDisplayState = [];
 
@@ -317,6 +513,7 @@ async function sendLoginEmail(){
 
 async function logout(){
   if(!db) return;
+  await syncDataBeforeLogout();
   await db.auth.signOut();
   currentUser = null;
   recipes = []; masterIngredients = []; masterUnits = []; cookLog = [];
@@ -521,6 +718,7 @@ async function loadAll(){
   cookLog = cl.error ? [] : (cl.data || []);
   if(cl.error) console.warn('cook_log belum tersedia (jalankan migrasi SQL):', cl.error.message);
 
+  await syncDataAfterLogin();
   render();
 }
 
@@ -775,11 +973,10 @@ function setupPhotoViewerEvents(){
 
 /* ---------- Recipe detail ---------- */
 
-window.viewRecipe = (id) => {
+window.viewRecipe = async (id) => {
   const r = recipes.find(x=>x.id===id);
   if(!r) return alert('Resep tidak ditemukan.');
-  recipeHistory = [id, ...recipeHistory.filter(x=>x!==id)].slice(0,10);
-  try { localStorage.setItem('recipeHistory', JSON.stringify(recipeHistory)); } catch(e){}
+  await addToRecipeHistoryDB(id);
 
   const allPhotos = [r._foto_url_display || photoDisplayUrl(r.foto_url), ...((Array.isArray(r._foto_urls_display) ? r._foto_urls_display : []) || [])].filter(Boolean);
   detailPhotoUrls = allPhotos;
@@ -1083,7 +1280,7 @@ function formatPlanDate(dateObj){
 }
 
 function saveMealPlan(){
-  try { localStorage.setItem('mealPlanV210', JSON.stringify(mealPlan)); } catch(e){}
+  syncMealPlanToDB();
 }
 
 function buildPlanText(){
@@ -1852,7 +2049,7 @@ function renderHistory(){
 /* ========== BACKUP / COLLECTIONS / PRINT ========== */
 
 function saveCollections(){
-  try { localStorage.setItem('recipeCollectionsV210', JSON.stringify(recipeCollections)); } catch(e){}
+  saveRecipeCollectionsToDB();
 }
 
 function ensureDefaultCollections(){
@@ -2250,5 +2447,5 @@ document.addEventListener('DOMContentLoaded', () => {
   renderAuthState();
   initAuth();
 
-  console.log('✅ Resep Keluarga VR1.0.0 (v2.6.1 core + v2.7.0 UI) loaded');
+  console.log('✅ Resep Keluarga VR1.0.1 (Supabase URL + DB sync fixed) loaded');
 });
