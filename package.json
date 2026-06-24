@@ -1,0 +1,9 @@
+{
+  "name": "resep-keluarga-yonarta",
+  "version": "2.5.0",
+  "private": true,
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {}
+}
