@@ -544,7 +544,7 @@
   // ============================================
   const SUPABASE_URL = 'https://tqexfiohtirjncguxjkx.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_DGbM2P7HfKFXQxUwf1zpxQ_FydGbvWe';
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   
   // ============================================
   // STATE
@@ -565,7 +565,7 @@
       return;
     }
     
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error } = await db.auth.signInWithPassword({ email, password });
     if (error) {
       showAuthStatus('Login gagal: ' + error.message, 'error');
     }
@@ -586,7 +586,7 @@
       return;
     }
     
-    const { error } = await supabase.auth.signUp({
+    const { error } = await db.auth.signUp({
       email,
       password,
       options: { data: { full_name: name } }
@@ -601,7 +601,7 @@
   }
   
   async function loginGoogle() {
-    const { error } = await supabase.auth.signInWithOAuth({
+    const { error } = await db.auth.signInWithOAuth({
       provider: 'google',
       options: { redirectTo: window.location.origin }
     });
@@ -614,7 +614,7 @@
   
   async function logout() {
     if (confirm('Yakin mau logout?')) {
-      await supabase.auth.signOut();
+      await db.auth.signOut();
     }
   }
   
@@ -653,7 +653,7 @@
   async function loadRecipes() {
     if (!currentUser) return;
     
-    const { data, error } = await supabase
+    const { data, error } = await db
       .from('recipes')
       .select('*')
       .eq('user_id', currentUser.id)
@@ -872,7 +872,7 @@
       return;
     }
     
-    const { error } = await supabase.from('recipes').insert({
+    const { error } = await db.from('recipes').insert({
       user_id: currentUser.id,
       nama_resep: wizard.name,
       durasi_menit: wizard.duration,
@@ -897,7 +897,7 @@
   // INIT
   // ============================================
   async function init() {
-    const { data } = await supabase.auth.getSession();
+    const { data } = await db.auth.getSession();
     currentUser = data?.session?.user || null;
     
     if (currentUser) {
@@ -907,7 +907,7 @@
       loadRecipes();
     }
     
-    supabase.auth.onAuthStateChange((event, session) => {
+    db.auth.onAuthStateChange((event, session) => {
       currentUser = session?.user || null;
       if (currentUser) {
         document.getElementById('authContainer').classList.remove('show');
