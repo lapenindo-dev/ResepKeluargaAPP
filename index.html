@@ -35,10 +35,8 @@
       line-height: 1.8;
       font-size: 16px;
       -webkit-font-smoothing: antialiased;
-      height: 100%;
     }
     
-    /* ===== AUTH SCREEN ===== */
     .auth-container {
       display: none;
       position: fixed;
@@ -135,7 +133,6 @@
     .btn-primary {
       background: var(--primary);
       color: white;
-      width: 100%;
     }
     
     .btn-primary:active {
@@ -147,11 +144,6 @@
       border: 2px solid var(--primary);
       color: var(--primary);
       background: transparent;
-      width: 100%;
-    }
-    
-    .btn-secondary:active {
-      background: rgba(255, 140, 66, 0.05);
     }
     
     .auth-toggle {
@@ -171,7 +163,6 @@
       font-size: 14px;
     }
     
-    /* ===== APP CONTAINER ===== */
     .app-container {
       display: none;
       position: fixed;
@@ -209,7 +200,6 @@
       to { opacity: 1; transform: translateY(0); }
     }
     
-    /* ===== HOME PAGE ===== */
     .home-hero {
       background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
       color: white;
@@ -220,22 +210,9 @@
       box-shadow: var(--shadow-lg);
     }
     
-    .home-emoji {
-      font-size: 48px;
-      margin-bottom: 12px;
-    }
-    
-    .home-greeting {
-      font-size: 24px;
-      font-weight: bold;
-      margin-bottom: 8px;
-    }
-    
-    .home-tagline {
-      font-size: 14px;
-      opacity: 0.9;
-      line-height: 1.6;
-    }
+    .home-emoji { font-size: 48px; margin-bottom: 12px; }
+    .home-greeting { font-size: 24px; font-weight: bold; margin-bottom: 8px; }
+    .home-tagline { font-size: 14px; opacity: 0.9; line-height: 1.6; }
     
     .home-stats {
       display: grid;
@@ -253,25 +230,10 @@
       box-shadow: var(--shadow);
     }
     
-    .stat-number {
-      font-size: 28px;
-      font-weight: bold;
-      color: var(--primary);
-    }
+    .stat-number { font-size: 28px; font-weight: bold; color: var(--primary); }
+    .stat-label { font-size: 12px; color: var(--text-light); margin-top: 4px; font-weight: 500; }
     
-    .stat-label {
-      font-size: 12px;
-      color: var(--text-light);
-      margin-top: 4px;
-      font-weight: 500;
-    }
-    
-    .cta-section {
-      padding: 20px;
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 12px;
-    }
+    .cta-section { padding: 20px; display: grid; grid-template-columns: 1fr; gap: 12px; }
     
     .cta-primary {
       background: var(--primary);
@@ -291,44 +253,13 @@
       transition: all 0.3s ease;
     }
     
-    .cta-primary:active {
-      transform: scale(0.98);
-      background: #E67A30;
-    }
+    .cta-primary:active { transform: scale(0.98); background: #E67A30; }
     
-    .cta-secondary {
-      background: white;
-      border: 2px solid var(--border);
-      color: var(--text-dark);
-      padding: 16px;
-      border-radius: 12px;
-      font-size: 16px;
-      font-weight: 600;
-      text-align: center;
-      cursor: pointer;
-      min-height: 48px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    
-    /* ===== RECIPES PAGE ===== */
     .recipe-header {
       background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
       color: white;
       padding: 20px;
       text-align: center;
-    }
-    
-    .recipe-header-title {
-      font-size: 26px;
-      font-weight: bold;
-      margin-bottom: 4px;
-    }
-    
-    .recipe-header-subtitle {
-      font-size: 14px;
-      opacity: 0.9;
     }
     
     .recipe-grid {
@@ -347,37 +278,13 @@
       transition: all 0.3s ease;
     }
     
-    .recipe-card:active {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-lg);
-    }
+    .recipe-card:active { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
     
-    .recipe-image {
-      width: 100%;
-      height: 180px;
-      background: var(--accent);
-      object-fit: cover;
-    }
+    .recipe-image { width: 100%; height: 180px; background: var(--accent); object-fit: cover; }
+    .recipe-info { padding: 16px; }
+    .recipe-name { font-size: 18px; font-weight: bold; color: var(--text-dark); margin-bottom: 8px; }
+    .recipe-meta { display: flex; gap: 16px; font-size: 13px; color: var(--text-light); }
     
-    .recipe-info {
-      padding: 16px;
-    }
-    
-    .recipe-name {
-      font-size: 18px;
-      font-weight: bold;
-      color: var(--text-dark);
-      margin-bottom: 8px;
-    }
-    
-    .recipe-meta {
-      display: flex;
-      gap: 16px;
-      font-size: 13px;
-      color: var(--text-light);
-    }
-    
-    /* ===== FORM WIZARD ===== */
     .wizard-header {
       background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
       color: white;
@@ -387,23 +294,9 @@
       text-align: center;
     }
     
-    .wizard-step-num {
-      font-size: 12px;
-      opacity: 0.9;
-      margin-bottom: 8px;
-      font-weight: 500;
-    }
-    
-    .wizard-title {
-      font-size: 22px;
-      font-weight: bold;
-      margin-bottom: 6px;
-    }
-    
-    .wizard-subtitle {
-      font-size: 14px;
-      opacity: 0.95;
-    }
+    .wizard-step-num { font-size: 12px; opacity: 0.9; margin-bottom: 8px; }
+    .wizard-title { font-size: 22px; font-weight: bold; margin-bottom: 6px; }
+    .wizard-subtitle { font-size: 14px; opacity: 0.95; }
     
     .wizard-section {
       background: white;
@@ -413,21 +306,8 @@
       box-shadow: var(--shadow);
     }
     
-    .wizard-field {
-      margin-bottom: 20px;
-    }
-    
-    .wizard-field:last-child {
-      margin-bottom: 0;
-    }
-    
-    .wizard-label {
-      display: block;
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text-dark);
-      margin-bottom: 8px;
-    }
+    .wizard-field { margin-bottom: 20px; }
+    .wizard-label { display: block; font-size: 14px; font-weight: 600; color: var(--text-dark); margin-bottom: 8px; }
     
     .wizard-input {
       width: 100%;
@@ -445,18 +325,8 @@
       box-shadow: 0 0 0 4px rgba(255, 140, 66, 0.1);
     }
     
-    .wizard-textarea {
-      width: 100%;
-      padding: 12px;
-      border: 2px solid var(--border);
-      border-radius: 10px;
-      font-size: 16px;
-      font-family: inherit;
-      resize: vertical;
-      min-height: 100px;
-    }
-    
     .photo-button {
+      width: 100%;
       padding: 32px 16px;
       border: 3px dashed var(--primary);
       border-radius: 16px;
@@ -471,40 +341,18 @@
       text-align: center;
       font-weight: 600;
       color: var(--text-dark);
-      width: 100%;
-      border: none;
-      font-family: inherit;
       font-size: 16px;
+      font-family: inherit;
+      margin: 0;
     }
     
-    .photo-button:active {
-      background: rgba(255, 140, 66, 0.1);
-      border-color: var(--secondary);
-    }
-    
-    .photo-icon {
-      font-size: 40px;
-      margin-bottom: 8px;
-    }
-    
-    .photo-preview {
-      margin-top: 16px;
-      text-align: center;
-    }
-    
-    .photo-preview img {
-      width: 100%;
-      border-radius: 12px;
-      max-height: 300px;
-      object-fit: cover;
-    }
+    .photo-icon { font-size: 40px; margin-bottom: 8px; }
     
     .wizard-nav {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
       padding: 20px;
-      margin-bottom: 20px;
     }
     
     .btn-nav {
@@ -518,23 +366,10 @@
       font-family: inherit;
     }
     
-    .btn-back {
-      background: white;
-      color: var(--text-dark);
-      border: 2px solid var(--border);
-    }
+    .btn-back { background: white; color: var(--text-dark); border: 2px solid var(--border); }
+    .btn-next { background: var(--primary); color: white; }
+    .btn-next:disabled { opacity: 0.5; cursor: not-allowed; }
     
-    .btn-next {
-      background: var(--primary);
-      color: white;
-    }
-    
-    .btn-next:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-    
-    /* ===== BOTTOM NAV ===== */
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -547,7 +382,6 @@
       border-top: 1px solid var(--border);
       box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
       z-index: 100;
-      safe-area-inset-bottom: env(safe-area-inset-bottom);
     }
     
     .nav-item {
@@ -574,36 +408,17 @@
       background: rgba(255, 140, 66, 0.05);
     }
     
-    .nav-emoji {
-      font-size: 24px;
-      margin-bottom: 4px;
-    }
+    .nav-emoji { font-size: 24px; margin-bottom: 4px; }
     
-    /* ===== EMPTY STATE ===== */
     .empty-state {
       text-align: center;
       padding: 60px 20px;
       color: var(--text-light);
     }
     
-    .empty-emoji {
-      font-size: 64px;
-      margin-bottom: 16px;
-    }
+    .empty-emoji { font-size: 64px; margin-bottom: 16px; }
+    .empty-title { font-size: 18px; font-weight: bold; color: var(--text-dark); margin-bottom: 8px; }
     
-    .empty-title {
-      font-size: 18px;
-      font-weight: bold;
-      color: var(--text-dark);
-      margin-bottom: 8px;
-    }
-    
-    .empty-text {
-      font-size: 14px;
-      line-height: 1.6;
-    }
-    
-    /* ===== LOADING ===== */
     .spinner {
       display: inline-block;
       width: 40px;
@@ -614,24 +429,16 @@
       animation: spin 0.8s linear infinite;
     }
     
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
+    @keyframes spin { to { transform: rotate(360deg); } }
     
-    /* ===== RESPONSIVE ===== */
     @media (min-width: 480px) {
-      .recipe-grid {
-        grid-template-columns: 1fr 1fr;
-      }
-      .home-stats {
-        grid-template-columns: 1fr 1fr 1fr;
-      }
+      .recipe-grid { grid-template-columns: 1fr 1fr; }
+      .home-stats { grid-template-columns: 1fr 1fr 1fr; }
     }
   </style>
 </head>
 <body>
 
-<!-- AUTH CONTAINER -->
 <div class="auth-container show" id="authContainer">
   <div class="auth-box">
     <div class="auth-title">Resep Keluarga</div>
@@ -662,11 +469,9 @@
   </div>
 </div>
 
-<!-- APP CONTAINER -->
 <div class="app-container" id="appContainer">
   <div class="content-area" id="contentArea">
     
-    <!-- HOME PAGE -->
     <div class="page active" id="homePage">
       <div class="home-hero">
         <div class="home-emoji">❤️</div>
@@ -689,46 +494,29 @@
         <button class="cta-primary" onclick="goToPage('add')">
           📸 Ambil Foto Resep
         </button>
-        <button class="cta-secondary" onclick="goToPage('recipes')">
+        <button class="cta-primary" onclick="goToPage('recipes')" style="background: white; color: var(--primary); border: 2px solid var(--primary);">
           🔥 Lihat Resep Favorit
         </button>
       </div>
     </div>
     
-    <!-- RESEP LIST PAGE -->
     <div class="page" id="recipesPage">
       <div class="recipe-header">
-        <div class="recipe-header-title">📖 Resep Anda</div>
-        <div class="recipe-header-subtitle">Koleksi cerita makan keluarga</div>
+        <div style="font-size: 26px; font-weight: bold; margin-bottom: 4px;">📖 Resep Anda</div>
+        <div>Koleksi cerita makan keluarga</div>
       </div>
       <div class="recipe-grid" id="recipeGrid">
         <div class="empty-state">
           <div class="empty-emoji">📷</div>
           <div class="empty-title">Belum ada resep</div>
-          <div class="empty-text">Mari mulai dengan ambil foto resep pertama!</div>
         </div>
       </div>
     </div>
     
-    <!-- ADD RESEP PAGE -->
     <div class="page" id="addPage"></div>
-    
-    <!-- JADWAL PAGE (placeholder) -->
-    <div class="page" id="jadwalPage">
-      <div class="recipe-header">
-        <div class="recipe-header-title">📅 Jadwal Menu</div>
-        <div class="recipe-header-subtitle">Menu mingguan Anda</div>
-      </div>
-      <div class="empty-state">
-        <div class="empty-emoji">📅</div>
-        <div class="empty-title">Fitur jadwal menu</div>
-        <div class="empty-text">Segera hadir di versi berikutnya!</div>
-      </div>
-    </div>
     
   </div>
   
-  <!-- BOTTOM NAVIGATION -->
   <div class="bottom-nav">
     <button class="nav-item active" onclick="goToPage('home')">
       <div class="nav-emoji">🏠</div>
@@ -749,15 +537,13 @@
   </div>
 </div>
 
-<!-- SUPABASE -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   // ============================================
-  // CONFIG
+  // INIT SUPABASE (ONLY ONCE)
   // ============================================
   const SUPABASE_URL = 'https://tqexfiohtirjncguxjkx.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_DGbM2P7HfKFXQxUwf1zpxQ_FydGbvWe';
-  
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   
   // ============================================
@@ -765,20 +551,10 @@
   // ============================================
   let currentUser = null;
   let recipes = [];
-  let wizardState = {
-    step: 1,
-    photo: null,
-    name: '',
-    duration: 0,
-    porsi: 0,
-    rating: 0,
-    bahan: '',
-    cara: '',
-    catatan: ''
-  };
+  let wizard = { step: 1, photo: null, name: '', duration: 0, porsi: 0, rating: 0 };
   
   // ============================================
-  // AUTH
+  // AUTH FUNCTIONS
   // ============================================
   async function loginEmail() {
     const email = document.getElementById('loginEmail').value.trim();
@@ -813,9 +589,7 @@
     const { error } = await supabase.auth.signUp({
       email,
       password,
-      options: {
-        data: { full_name: name }
-      }
+      options: { data: { full_name: name } }
     });
     
     if (error) {
@@ -829,9 +603,7 @@
   async function loginGoogle() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: {
-        redirectTo: window.location.origin
-      }
+      options: { redirectTo: window.location.origin }
     });
     if (error) showAuthStatus('Google login gagal', 'error');
   }
@@ -847,10 +619,10 @@
   }
   
   function toggleAuthForm() {
-    document.getElementById('loginForm').style.display = 
-      document.getElementById('loginForm').style.display === 'none' ? 'block' : 'none';
-    document.getElementById('signupForm').style.display = 
-      document.getElementById('signupForm').style.display === 'none' ? 'block' : 'none';
+    const login = document.getElementById('loginForm');
+    const signup = document.getElementById('signupForm');
+    login.style.display = login.style.display === 'none' ? 'block' : 'none';
+    signup.style.display = signup.style.display === 'none' ? 'block' : 'none';
   }
   
   function showAuthStatus(msg, type) {
@@ -860,7 +632,7 @@
   }
   
   // ============================================
-  // UI NAVIGATION
+  // NAVIGATION
   // ============================================
   function goToPage(name) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -870,7 +642,7 @@
     event.target.closest('.nav-item')?.classList.add('active');
     
     if (name === 'recipes') loadRecipes();
-    if (name === 'add') setupWizard();
+    if (name === 'add') showWizardStep(1);
     
     window.scrollTo(0, 0);
   }
@@ -888,7 +660,7 @@
       .order('created_at', { ascending: false });
     
     if (error) {
-      console.error('Error loading recipes:', error);
+      console.error('Error:', error);
       return;
     }
     
@@ -898,36 +670,24 @@
   }
   
   function updateStats() {
-    if (!recipes.length) {
-      document.getElementById('statRecipes').textContent = '0';
-      document.getElementById('statRating').textContent = '0';
-      return;
-    }
-    
     document.getElementById('statRecipes').textContent = recipes.length;
-    const maxRating = Math.max(...recipes.map(r => r.rating_keluarga || 0));
-    document.getElementById('statRating').textContent = maxRating || '0';
+    const maxRating = recipes.length ? Math.max(...recipes.map(r => r.rating_keluarga || 0)) : 0;
+    document.getElementById('statRating').textContent = maxRating;
   }
   
   function renderRecipes() {
     const grid = document.getElementById('recipeGrid');
     
     if (!recipes.length) {
-      grid.innerHTML = `
-        <div class="empty-state">
-          <div class="empty-emoji">📷</div>
-          <div class="empty-title">Belum ada resep</div>
-          <div class="empty-text">Mari mulai dengan ambil foto resep pertama!</div>
-        </div>
-      `;
+      grid.innerHTML = `<div class="empty-state"><div class="empty-emoji">📷</div><div class="empty-title">Belum ada resep</div></div>`;
       return;
     }
     
     grid.innerHTML = recipes.map(r => `
       <div class="recipe-card">
-        ${r.foto_url ? `<img src="${r.foto_url}" class="recipe-image" onerror="this.style.backgroundColor='var(--accent)'"  alt="${r.nama_resep}">` : `<div class="recipe-image"></div>`}
+        ${r.foto_url ? `<img src="${r.foto_url}" class="recipe-image" onerror="this.style.backgroundColor='var(--accent)'">` : `<div class="recipe-image"></div>`}
         <div class="recipe-info">
-          <div class="recipe-name">${r.nama_resep || 'Resep Tanpa Nama'}</div>
+          <div class="recipe-name">${r.nama_resep || 'Resep'}</div>
           <div class="recipe-meta">
             ${r.rating_keluarga ? `⭐ ${r.rating_keluarga}` : ''}
             ${r.durasi_menit ? `⏱️ ${r.durasi_menit}m` : ''}
@@ -938,25 +698,10 @@
   }
   
   // ============================================
-  // WIZARD FORM
+  // WIZARD
   // ============================================
-  function setupWizard() {
-    wizardState = {
-      step: 1,
-      photo: null,
-      name: '',
-      duration: 0,
-      porsi: 0,
-      rating: 0,
-      bahan: '',
-      cara: '',
-      catatan: ''
-    };
-    showWizardStep(1);
-  }
-  
   function showWizardStep(step) {
-    wizardState.step = step;
+    wizard.step = step;
     const container = document.getElementById('addPage');
     
     if (step === 1) {
@@ -964,29 +709,25 @@
         <div class="wizard-header">
           <div class="wizard-step-num">Langkah 1 dari 5</div>
           <div class="wizard-title">📸 Ambil Foto Resep</div>
-          <div class="wizard-subtitle">Pastikan cahaya cukup & teks resep jelas</div>
+          <div class="wizard-subtitle">Pastikan cahaya cukup</div>
         </div>
         
         <div class="wizard-section">
-          <button class="photo-button" onclick="capturePhoto()">
-            <div class="photo-icon">📷</div>
-            <div>Ambil Foto</div>
-          </button>
-          <button class="photo-button" style="margin-top: 12px; border-color: var(--secondary);" onclick="uploadPhoto()">
+          <button class="photo-button" onclick="uploadPhoto()">
             <div class="photo-icon">📁</div>
-            <div>Pilih dari HP</div>
+            <div>Pilih Foto dari HP</div>
           </button>
-          ${wizardState.photo ? `
-            <div class="photo-preview">
-              <img src="${wizardState.photo}" alt="foto">
-              <button class="btn btn-secondary" style="margin-top: 12px; width: 100%;" onclick="clearPhoto()">Ambil Ulang</button>
+          ${wizard.photo ? `
+            <div style="margin-top: 16px; text-align: center;">
+              <img src="${wizard.photo}" style="width: 100%; border-radius: 12px; max-height: 300px;">
+              <button class="btn-nav" style="width: 100%; margin-top: 12px; background: var(--secondary); color: white; border: none;" onclick="clearPhoto()">Ambil Ulang</button>
             </div>
           ` : ''}
         </div>
         
         <div class="wizard-nav">
           <button class="btn-nav btn-back" onclick="goToPage('home')">← Batal</button>
-          <button class="btn-nav btn-next" onclick="nextWizardStep()" ${!wizardState.photo ? 'disabled' : ''}>Lanjut →</button>
+          <button class="btn-nav btn-next" onclick="showWizardStep(2)" ${!wizard.photo ? 'disabled' : ''}>Lanjut →</button>
         </div>
       `;
     } else if (step === 2) {
@@ -994,135 +735,101 @@
         <div class="wizard-header">
           <div class="wizard-step-num">Langkah 2 dari 5</div>
           <div class="wizard-title">✨ AI Baca Resep</div>
-          <div class="wizard-subtitle">AI sedang membaca resep Mama...</div>
         </div>
         
         <div class="wizard-section">
           <div style="text-align: center; padding: 40px 20px;">
             <div class="spinner" style="margin: 0 auto; margin-bottom: 20px;"></div>
-            <div style="color: var(--text-light); font-size: 14px;">Sebentar lagi... (biasanya 5-10 detik)</div>
+            <div style="color: var(--text-light);">Sebentar lagi... (5-10 detik)</div>
           </div>
         </div>
         
         <div class="wizard-nav">
           <button class="btn-nav btn-back" onclick="showWizardStep(1)">← Kembali</button>
-          <button class="btn-nav btn-next" onclick="nextWizardStep()">Lanjut →</button>
+          <button class="btn-nav btn-next" onclick="showWizardStep(3)">Lanjut →</button>
         </div>
       `;
-      
-      // Simulate AI extraction (in production, call Qwen API)
-      setTimeout(() => nextWizardStep(), 2000);
-      
+      setTimeout(() => {}, 2000);
     } else if (step === 3) {
       container.innerHTML = `
         <div class="wizard-header">
           <div class="wizard-step-num">Langkah 3 dari 5</div>
-          <div class="wizard-title">📝 Info Dasar Resep</div>
-          <div class="wizard-subtitle">Nama, durasi, & porsi saja kok</div>
+          <div class="wizard-title">📝 Info Dasar</div>
         </div>
         
         <div class="wizard-section">
           <div class="wizard-field">
             <label class="wizard-label">Nama Resep</label>
-            <input type="text" class="wizard-input" id="wizName" placeholder="Contoh: Bakso Daging Sapi" value="${wizardState.name}" autofocus>
+            <input type="text" class="wizard-input" id="wName" placeholder="Bakso" value="${wizard.name}" autofocus>
           </div>
-          
           <div class="wizard-field">
-            <label class="wizard-label">⏱️ Berapa lama memasak? (menit)</label>
-            <input type="number" class="wizard-input" id="wizDuration" placeholder="30" value="${wizardState.duration}" min="1">
+            <label class="wizard-label">⏱️ Durasi (menit)</label>
+            <input type="number" class="wizard-input" id="wDur" placeholder="30" value="${wizard.duration}" min="1">
           </div>
-          
           <div class="wizard-field">
-            <label class="wizard-label">👥 Untuk berapa porsi?</label>
-            <input type="number" class="wizard-input" id="wizPorsi" placeholder="4" value="${wizardState.porsi}" min="1">
+            <label class="wizard-label">👥 Porsi</label>
+            <input type="number" class="wizard-input" id="wPor" placeholder="4" value="${wizard.porsi}" min="1">
           </div>
-          
           <div class="wizard-field">
-            <label class="wizard-label">⭐ Rating Resep (0-5)</label>
-            <input type="number" class="wizard-input" id="wizRating" min="0" max="5" placeholder="5" value="${wizardState.rating}">
+            <label class="wizard-label">⭐ Rating (0-5)</label>
+            <input type="number" class="wizard-input" id="wRat" min="0" max="5" placeholder="5" value="${wizard.rating}">
           </div>
         </div>
         
         <div class="wizard-nav">
           <button class="btn-nav btn-back" onclick="showWizardStep(1)">← Kembali</button>
-          <button class="btn-nav btn-next" onclick="saveStep3AndNext()">Lanjut →</button>
+          <button class="btn-nav btn-next" onclick="saveStep3()">Lanjut →</button>
         </div>
       `;
     } else if (step === 4) {
       container.innerHTML = `
         <div class="wizard-header">
           <div class="wizard-step-num">Langkah 4 dari 5</div>
-          <div class="wizard-title">📌 Detail Tambahan</div>
-          <div class="wizard-subtitle">(Opsional) Bahan, cara, catatan</div>
+          <div class="wizard-title">📌 Detail Opsional</div>
         </div>
         
         <div class="wizard-section">
-          <details style="margin-bottom: 16px;">
-            <summary style="cursor: pointer; font-weight: 600; color: var(--primary); padding: 12px 0; user-select: none;">🥘 Bahan-Bahan</summary>
-            <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border);">
-              <textarea class="wizard-textarea" id="wizBahan" placeholder="Contoh:&#10;- 500gr daging&#10;- 2 butir telur&#10;- Bawang merah">${wizardState.bahan}</textarea>
-            </div>
-          </details>
-          
-          <details style="margin-bottom: 16px;">
-            <summary style="cursor: pointer; font-weight: 600; color: var(--primary); padding: 12px 0; user-select: none;">👨‍🍳 Cara Memasak</summary>
-            <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border);">
-              <textarea class="wizard-textarea" id="wizCara" placeholder="Contoh:&#10;1. Potong daging kecil&#10;2. Tumis bawang...">${wizardState.cara}</textarea>
-            </div>
-          </details>
-          
-          <details>
-            <summary style="cursor: pointer; font-weight: 600; color: var(--primary); padding: 12px 0; user-select: none;">💬 Catatan Keluarga</summary>
-            <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border);">
-              <textarea class="wizard-textarea" id="wizCatatan" placeholder="Misal: 'Favorit Mama', 'Resep Oma zaman dulu'" style="min-height: 80px;">${wizardState.catatan}</textarea>
-            </div>
-          </details>
+          <p style="margin-bottom: 16px; color: var(--text-light); font-size: 14px;">Bahan, cara, & catatan (opsional)</p>
         </div>
         
         <div class="wizard-nav">
           <button class="btn-nav btn-back" onclick="showWizardStep(3)">← Kembali</button>
-          <button class="btn-nav btn-next" onclick="saveStep4AndNext()">Lanjut →</button>
+          <button class="btn-nav btn-next" onclick="showWizardStep(5)">Lanjut →</button>
         </div>
       `;
     } else if (step === 5) {
       container.innerHTML = `
         <div class="wizard-header">
           <div class="wizard-step-num">Langkah 5 dari 5</div>
-          <div class="wizard-title">✨ Resep Siap Disimpan!</div>
-          <div class="wizard-subtitle">Periksa sekali lagi sebelum simpan</div>
+          <div class="wizard-title">✨ Konfirmasi</div>
         </div>
         
         <div class="wizard-section">
-          <img src="${wizardState.photo}" style="width: 100%; border-radius: 12px; max-height: 250px; object-fit: cover; margin-bottom: 16px;">
-          
+          <img src="${wizard.photo}" style="width: 100%; border-radius: 12px; max-height: 250px; margin-bottom: 16px;">
           <div style="background: var(--accent); padding: 16px; border-radius: 12px;">
             <div style="margin-bottom: 12px;">
               <div style="font-size: 12px; color: var(--text-light);">Nama Resep</div>
-              <div style="font-size: 18px; font-weight: bold; color: var(--text-dark);">${wizardState.name || '-'}</div>
+              <div style="font-size: 18px; font-weight: bold;">${wizard.name}</div>
             </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
               <div>
                 <div style="font-size: 12px; color: var(--text-light);">Durasi</div>
-                <div style="font-size: 16px; font-weight: 600; color: var(--text-dark);">${wizardState.duration || 0} menit</div>
+                <div style="font-size: 16px; font-weight: 600;">${wizard.duration}m</div>
               </div>
               <div>
                 <div style="font-size: 12px; color: var(--text-light);">Porsi</div>
-                <div style="font-size: 16px; font-weight: 600; color: var(--text-dark);">${wizardState.porsi || 0} orang</div>
+                <div style="font-size: 16px; font-weight: 600;">${wizard.porsi}</div>
               </div>
             </div>
           </div>
         </div>
         
-        <div class="wizard-nav" style="grid-template-columns: 1fr; gap: 12px; padding: 20px; margin-bottom: 0;">
-          <button class="btn-nav btn-back" onclick="showWizardStep(3)" style="grid-column: 1;">← Edit Info Resep</button>
-          <button class="btn-nav btn-next" onclick="saveRecipe()" style="padding: 16px; font-size: 17px; grid-column: 1;">💾 Simpan Resep Selamanya</button>
+        <div class="wizard-nav" style="grid-template-columns: 1fr;">
+          <button class="btn-nav btn-back" onclick="showWizardStep(3)" style="grid-column: 1;">← Edit</button>
+          <button class="btn-nav btn-next" onclick="saveRecipe()" style="grid-column: 1;">💾 Simpan</button>
         </div>
       `;
     }
-  }
-  
-  function capturePhoto() {
-    alert('Fitur kamera akan tersedia di versi native app. Gunakan "Pilih dari HP" untuk sekarang.');
   }
   
   function uploadPhoto() {
@@ -1130,76 +837,60 @@
     input.type = 'file';
     input.accept = 'image/*';
     input.onchange = (e) => {
-      const file = e.target.files[0];
       const reader = new FileReader();
       reader.onload = (evt) => {
-        wizardState.photo = evt.target.result;
+        wizard.photo = evt.target.result;
         showWizardStep(1);
       };
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(e.target.files[0]);
     };
     input.click();
   }
   
   function clearPhoto() {
-    wizardState.photo = null;
+    wizard.photo = null;
     showWizardStep(1);
   }
   
-  function nextWizardStep() {
-    if (wizardState.step < 5) {
-      showWizardStep(wizardState.step + 1);
-    }
-  }
-  
-  function saveStep3AndNext() {
-    wizardState.name = document.getElementById('wizName').value.trim();
-    wizardState.duration = parseInt(document.getElementById('wizDuration').value) || 0;
-    wizardState.porsi = parseInt(document.getElementById('wizPorsi').value) || 0;
-    wizardState.rating = parseInt(document.getElementById('wizRating').value) || 0;
+  function saveStep3() {
+    wizard.name = document.getElementById('wName').value.trim();
+    wizard.duration = parseInt(document.getElementById('wDur').value) || 0;
+    wizard.porsi = parseInt(document.getElementById('wPor').value) || 0;
+    wizard.rating = parseInt(document.getElementById('wRat').value) || 0;
     
-    if (!wizardState.name) {
+    if (!wizard.name) {
       alert('Nama resep harus diisi!');
       return;
     }
     
-    nextWizardStep();
-  }
-  
-  function saveStep4AndNext() {
-    wizardState.bahan = document.getElementById('wizBahan').value;
-    wizardState.cara = document.getElementById('wizCara').value;
-    wizardState.catatan = document.getElementById('wizCatatan').value;
-    
-    nextWizardStep();
+    showWizardStep(4);
   }
   
   async function saveRecipe() {
-    if (!currentUser || !wizardState.photo || !wizardState.name) {
+    if (!currentUser || !wizard.photo || !wizard.name) {
       alert('Data tidak lengkap!');
       return;
     }
     
-    try {
-      const { error } = await supabase.from('recipes').insert({
-        user_id: currentUser.id,
-        nama_resep: wizardState.name,
-        durasi_menit: wizardState.duration,
-        porsi: wizardState.porsi,
-        rating_keluarga: wizardState.rating,
-        foto_url: wizardState.photo,
-        sumber_resep: 'Manual'
-      });
-      
-      if (error) throw error;
-      
-      alert('✅ Resep berhasil disimpan!');
-      wizardState = { step: 1, photo: null, name: '', duration: 0, porsi: 0, rating: 0 };
-      goToPage('home');
-      loadRecipes();
-    } catch (err) {
-      alert('Error: ' + err.message);
+    const { error } = await supabase.from('recipes').insert({
+      user_id: currentUser.id,
+      nama_resep: wizard.name,
+      durasi_menit: wizard.duration,
+      porsi: wizard.porsi,
+      rating_keluarga: wizard.rating,
+      foto_url: wizard.photo,
+      sumber_resep: 'Manual'
+    });
+    
+    if (error) {
+      alert('Error: ' + error.message);
+      return;
     }
+    
+    alert('✅ Resep berhasil disimpan!');
+    wizard = { step: 1, photo: null, name: '', duration: 0, porsi: 0, rating: 0 };
+    goToPage('home');
+    loadRecipes();
   }
   
   // ============================================
@@ -1210,28 +901,24 @@
     currentUser = data?.session?.user || null;
     
     if (currentUser) {
-      showAuthScreen(false);
+      document.getElementById('authContainer').classList.remove('show');
+      document.getElementById('appContainer').classList.add('show');
       document.getElementById('userName').textContent = currentUser.user_metadata?.full_name || 'Ibu';
       loadRecipes();
-    } else {
-      showAuthScreen(true);
     }
     
-    supabase.auth.onAuthStateChange(async (event, session) => {
+    supabase.auth.onAuthStateChange((event, session) => {
       currentUser = session?.user || null;
       if (currentUser) {
-        showAuthScreen(false);
+        document.getElementById('authContainer').classList.remove('show');
+        document.getElementById('appContainer').classList.add('show');
         document.getElementById('userName').textContent = currentUser.user_metadata?.full_name || 'Ibu';
         loadRecipes();
       } else {
-        showAuthScreen(true);
+        document.getElementById('authContainer').classList.add('show');
+        document.getElementById('appContainer').classList.remove('show');
       }
     });
-  }
-  
-  function showAuthScreen(show) {
-    document.getElementById('authContainer').classList.toggle('show', show);
-    document.getElementById('appContainer').classList.toggle('show', !show);
   }
   
   init();
