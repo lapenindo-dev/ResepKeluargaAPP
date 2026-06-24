@@ -4,8 +4,7 @@
    AI Extract (Qwen): Foto dan Teks/Caption Manual
    ===================================================== */
 const SUPABASE_URL = 'https://tqexfiohtirjncguxjkx.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_DGbM2P7HfKFXQxUwf1zpxQ_FydGbvWe
-';
+const SUPABASE_KEY = 'sb_publishable_DGbM2P7HfKFXQxUwf1zpxQ_FydGbvWe';
 let db;
 try { db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY); }
 catch(e){ console.error('Supabase init gagal:', e); }
