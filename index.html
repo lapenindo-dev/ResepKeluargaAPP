@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Resep Keluarga v2.5.0</title>
+  <title>Resep Keluarga</title>
   <meta name="theme-color" content="#f59e0b" />
   <meta name="description" content="Buku resep keluarga digital untuk menyimpan resep Mama, Oma, dan keluarga agar tidak hilang dan bisa diwariskan ke anak cucu." />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Resep Keluarga" />
-  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
   <link rel="manifest" href="manifest.json" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -69,17 +69,42 @@
     <div class="topbar-actions">
       <button id="shareAppBtn" class="icon-btn" title="Share aplikasi">↗</button>
       <button id="refreshBtn" class="icon-btn" title="Refresh data">⟳</button>
-      <button id="logoutBtn" class="icon-btn" title="Logout">⎋</button>
+      <button id="logoutBtn" class="icon-btn logout-main-btn" title="Keluar / Logout" aria-label="Keluar dari akun">Keluar</button>
     </div>
   </header>
 
   <main>
+
+    <section id="onboarding" class="page onboarding-page">
+      <div class="home-hero onboarding-hero">
+        <p class="eyebrow">Selamat datang di Resep Keluarga</p>
+        <h2>Simpan resep Mama hari ini, sebelum hanya tersisa kenangan.</h2>
+        <p>Buat buku resep digital pribadi untuk keluarga Anda. Setiap akun memiliki ruang resep sendiri, jadi data keluarga lain tidak tercampur.</p>
+      </div>
+      <div class="onboarding-grid">
+        <div class="tool-card"><h3>1. Simpan resep pertama</h3><p class="muted">Mulai dari resep yang paling sering dimasak di rumah: resep Mama, Oma, atau menu favorit anak.</p></div>
+        <div class="tool-card"><h3>2. Tambahkan foto & cerita</h3><p class="muted">Foto masakan, catatan lama, dan cerita di balik resep membuat resep terasa hidup.</p></div>
+        <div class="tool-card"><h3>3. Bagikan ke keluarga</h3><p class="muted">Kirim link aplikasi ke keluarga. Mereka bisa membuat akun sendiri dan menyimpan resep masing-masing.</p></div>
+      </div>
+      <div class="actions stacked-actions">
+        <button id="onboardingStartBtn" class="primary wide" type="button">+ Simpan Resep Pertama</button>
+        <button id="onboardingHelpBtn" class="secondary wide" type="button">Lihat Cara Pakai</button>
+        <button id="onboardingLaterBtn" class="ghost wide" type="button">Nanti saja</button>
+      </div>
+    </section>
+
     <section id="home" class="page active">
       <div class="home-hero">
         <p class="eyebrow">Resep Keluarga</p>
         <h2>Simpan resep Mama hari ini, sebelum hanya tersisa kenangan.</h2>
         <p>Resep keluarga sering hilang karena tidak pernah ditulis. Simpan resep Mama, Oma, dan keluarga dalam satu buku resep digital yang bisa diwariskan ke anak cucu.</p>
         <button class="primary wide" data-go="add">+ Simpan Resep Keluarga</button>
+      </div>
+
+      <div id="newUserOnboardingCard" class="tool-card onboarding-mini" style="display:none">
+        <h3>👋 Mulai dari resep pertama</h3>
+        <p class="muted">Simpan satu resep keluarga dulu. Setelah itu Anda bisa tambah foto, koleksi, jadwal menu, dan daftar belanja.</p>
+        <button class="primary wide" data-go="add" type="button">+ Simpan Resep Pertama</button>
       </div>
       <div class="stats">
         <div class="card"><b id="totalResep">0</b><span>Resep Keluarga Tersimpan</span></div>
@@ -216,7 +241,7 @@ Cara: Tumis bawang, masukkan ayam, masak sampai matang."></textarea>
           </select>
         </label>
         <label>Siapa yang Biasanya Masak <small class="hint">Nama anggota keluarga yang paling sering membuat resep ini</small>
-          <input id="dimasak_oleh" list="cookNameOptions" placeholder="Contoh: Mama, Papa, Yonarta" />
+          <input id="dimasak_oleh" list="cookNameOptions" placeholder="Contoh: Mama, Papa, Oma" />
           <datalist id="cookNameOptions"></datalist>
         </label>
         <label>Durasi Menit<input id="durasi_menit" type="number" placeholder="45" /></label>
@@ -249,7 +274,7 @@ Cara: Tumis bawang, masukkan ayam, masak sampai matang."></textarea>
           <select id="sumber_resep"><option>Keluarga</option><option>Warisan</option><option>Internet</option><option>Teman</option><option>Kreasi sendiri</option></select>
         </label>
         <label>Label Kenangan<input id="tag" placeholder="Resep Mama, Menu Minggu, Favorit Anak, Lebaran" /></label>
-        <label>Cerita di Balik Resep<textarea id="catatan_yonarta" placeholder="Ceritakan kenangan di balik resep ini. Siapa yang pertama membuatnya? Biasanya dimasak saat apa?"></textarea></label>
+        <label>Cerita di Balik Resep<textarea id="catatan_keluarga" placeholder="Ceritakan kenangan di balik resep ini. Siapa yang pertama membuatnya? Biasanya dimasak saat apa?"></textarea></label>
         <label>Link Sumber<input id="link_sumber" placeholder="Website / sosial media / sumber lain" /></label>
         <button class="primary wide" type="submit">Simpan Resep Keluarga</button>
         <button class="ghost wide" type="button" id="cancelEdit">Batal</button>
@@ -324,12 +349,12 @@ Cara: Tumis bawang, masukkan ayam, masak sampai matang."></textarea>
 
     <section id="tools" class="page">
       <h2>📁 Warisan Keluarga / Print</h2>
-      <p class="muted">Area sederhana untuk mengatur koleksi resep dan print resep. Backup JSON disembunyikan dari user keluarga.</p>
+      <p class="muted">Atur koleksi resep, print/PDF, bantuan, privasi, dan backup data akun Anda.</p>
 
-      <div class="tool-card admin-only" data-admin-only="backup">
-        <h3>💾 Backup Data Admin</h3>
-        <p class="muted">Khusus admin. Export/import JSON hanya untuk pindah data atau restore darurat, bukan untuk pemakaian keluarga harian.</p>
-        <button id="exportDataBtn" class="primary wide" type="button">⬇️ Export Backup JSON</button>
+      <div class="tool-card">
+        <h3>💾 Backup Data Akun</h3>
+        <p class="muted">Export hanya berisi resep dari akun yang sedang login. Simpan file JSON ini sebagai cadangan pribadi atau untuk pindah data.</p>
+        <button id="exportDataBtn" class="primary wide" type="button">⬇️ Export Backup Akun</button>
         <label>Import / Restore Backup JSON
           <input id="importDataFile" type="file" accept="application/json,.json" />
         </label>
@@ -351,6 +376,62 @@ Cara: Tumis bawang, masukkan ayam, masak sampai matang."></textarea>
         <h3>🖨️ Print / PDF Resep</h3>
         <p class="muted">Buka detail resep lalu tekan tombol Print. Dari jendela print browser bisa pilih “Save as PDF”.</p>
         <button class="secondary wide" data-go="recipes" type="button">📖 Pilih Resep untuk Print</button>
+      </div>
+
+      <div class="tool-card">
+        <h3>❓ Bantuan Singkat</h3>
+        <p class="muted">Pelajari cara tambah resep, upload foto, membuat koleksi, backup data, dan install sebagai aplikasi.</p>
+        <button class="secondary wide" data-go="help" type="button">Buka Bantuan</button>
+      </div>
+
+      <div class="tool-card">
+        <h3>🔒 Privasi Data</h3>
+        <p class="muted">Lihat ringkasan cara aplikasi menyimpan data resep dan foto setiap akun.</p>
+        <button class="secondary wide" data-go="privacy" type="button">Buka Privacy Policy</button>
+      </div>
+    </section>
+
+
+
+    <section id="help" class="page">
+      <button class="ghost" type="button" onclick="go('tools')">← Kembali</button>
+      <h2>❓ Bantuan Singkat</h2>
+      <div class="tool-card">
+        <h3>Cara mulai</h3>
+        <p class="muted">Login dengan Google/email, tekan “Simpan Resep Keluarga”, isi nama resep, bahan, cara memasak, lalu tekan simpan.</p>
+      </div>
+      <div class="tool-card">
+        <h3>Foto resep</h3>
+        <p class="muted">Foto utama tampil di kartu resep. Foto tambahan bisa dipakai untuk catatan resep, screenshot, bahan, atau proses memasak.</p>
+      </div>
+      <div class="tool-card">
+        <h3>Koleksi dan print</h3>
+        <p class="muted">Masukkan resep ke koleksi seperti Menu Harian, Menu Anak, Hari Raya, atau Favorit. Untuk PDF, buka detail resep lalu tekan Print / PDF.</p>
+      </div>
+      <div class="tool-card">
+        <h3>Backup</h3>
+        <p class="muted">Gunakan Export Backup Akun secara berkala. File JSON berisi data resep akun yang sedang login.</p>
+      </div>
+    </section>
+
+    <section id="privacy" class="page">
+      <button class="ghost" type="button" onclick="go('tools')">← Kembali</button>
+      <h2>🔒 Privacy Policy</h2>
+      <div class="tool-card">
+        <h3>Data yang disimpan</h3>
+        <p class="muted">Aplikasi menyimpan email akun, nama tampilan dari login, data resep, bahan, langkah memasak, koleksi, jadwal, catatan, dan foto yang Anda upload.</p>
+      </div>
+      <div class="tool-card">
+        <h3>Pemisahan akun</h3>
+        <p class="muted">Setiap akun hanya melihat resep miliknya sendiri melalui aturan keamanan database. Resep akun lain tidak ditampilkan di akun Anda.</p>
+      </div>
+      <div class="tool-card">
+        <h3>Foto resep</h3>
+        <p class="muted">Mulai v2.6.0, foto disiapkan untuk bucket private dengan signed URL sementara. Jangan upload dokumen sensitif seperti KTP, kartu pembayaran, atau data rahasia lain.</p>
+      </div>
+      <div class="tool-card">
+        <h3>Kontak & penghapusan data</h3>
+        <p class="muted">Untuk versi publik, siapkan email support khusus agar user bisa meminta bantuan atau penghapusan akun/data.</p>
       </div>
     </section>
 

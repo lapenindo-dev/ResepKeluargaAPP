@@ -1,12 +1,12 @@
-const CACHE_NAME = 'resep-yonarta-v2.3.5';
+const CACHE_NAME = 'resep-keluarga-v2.6.0-polish-private';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
   '/style.css',
   '/app.js',
   '/manifest.json',
-  '/icons/icon-192.png',
-  '/icons/icon-512.png'
+  '/icon-192.png',
+  '/icon-512.png'
 ];
 
 // Install — cache static assets
